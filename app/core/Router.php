@@ -17,17 +17,24 @@ class Router
         $requestMethod = $_SERVER['REQUEST_METHOD'];
         // $parts = explode('/', $requestUri);
         // $requestUri = "/" . end($parts);
-        // إزالة اسم المجلد (يدويًا أو تلقائيًا)
-        $scriptName = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+
+        $scriptName =  dirname($_SERVER['SCRIPT_NAME']); //"/Php_structure/public" delete it from uri to get route name directly.
         $requestUri = str_replace($scriptName, '', $requestUri);
+        // var_dump($scriptName);
 
 
         foreach ($this->routes as $route) {
+            
             if ($route["path"] === $requestUri && $route["method"] === $requestMethod) {
                 return call_user_func($route["callback"]);
             }
+            // else{
+            //     var_dump($route["path"]);
+            //     var_dump($route["method"]);
+                
+            // }
         }
-
+        
         http_response_code(404);
         echo json_encode(["error" => "Route not found"]);
     }

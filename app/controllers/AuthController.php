@@ -2,8 +2,14 @@
 
 namespace App\Controllers;
 
+// require_once __DIR__ . "../middleware/AuthMiddleware.php";
 use App\Core\Database;
+// use App\Middleware\AuthMiddleware;
+use App\Middleware\AuthMiddleware;
 use App\Models\Auth;
+
+// use APP\Middleware;
+
 use function App\helpers\jsonResponse;
 
 class AuthController
@@ -22,14 +28,9 @@ class AuthController
     // 🟢 Register new user
     public function register()
     {
-
-        $data= json_decode(file_get_contents("php://input"), true);
-
-        print_r ($data);
-
         $name = htmlspecialchars(strip_tags($this->data["name"] ?? ""));
         $email = htmlspecialchars(strip_tags($this->data["email"] ?? ""));
-        $password = password_hash($this->data["password"] ?? "", PASSWORD_BCRYPT);
+        $password = $this->data["password"];
 
         if (!$name || !$email || !$password) {
             return jsonResponse(["error" => "Missing required fields"], 400);
@@ -51,12 +52,17 @@ class AuthController
         $email    = htmlspecialchars(strip_tags($this->data["email"] ?? ""));
         $password = $this->data["password"] ?? "";
         $user = $this->authModel->login($email, $password);
+        // var_dump($user["password"] );
+        // var_dump($user); // شوف القيم كلها
+        // var_dump($password);
+        // var_dump($user["password"]);
+        // var_dump(password_verify($password, $user["password"]));
         if (!$user || !password_verify($password, $user["password"])) {
             return jsonResponse(["error" => "Invalid email or password"], 401);
         }
 
         // manual token . .. 
-        $token = base64_encode(random_bytes(16));
+        $token = AuthMiddleware::generateTokens($user);
 
         return jsonResponse([
             "message" => "Login successful ✅",
@@ -67,5 +73,32 @@ class AuthController
                 "token" => $token
             ]
         ]);
+    }
+
+    public function refreshToken()
+    {
+        $data = json_decode(file_get_contents("php://input"), true);
+        $refreshToken = $data["refresh_token"] ?? null;
+        var_dump( $data);
+        if (!$refreshToken) {
+            echo json_encode(["error" => "Missing refresh token"]);
+            return;
+        }
+
+        $decoded = AuthMiddleware::verifyToken($refreshToken);
+
+        if (!$decoded || $decoded->type !== "refresh") {
+            http_response_code(401);
+            echo json_encode(["error" => "Invalid or expired refresh token"]);
+            return;
+        }
+
+        $user = [
+            "id" => $decoded->id,
+            "email" => $decoded->email
+        ];
+
+        $newTokens = AuthMiddleware::generateTokens($user);
+        return jsonResponse($newTokens);
     }
 }

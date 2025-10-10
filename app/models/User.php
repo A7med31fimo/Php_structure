@@ -20,6 +20,11 @@ class User
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getUser($id)  {
+        $stmt = $this->conn->prepare("SELECT * FROM $this->table where id = ?;");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
    
     public function delete($id)
     {

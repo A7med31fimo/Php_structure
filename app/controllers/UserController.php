@@ -22,7 +22,9 @@ class UserController
     {
         return jsonResponse($this->user->getAll());
     }
-
+    public function getUser($id){
+        return $this->user->getUser($id);
+    }
 
     public function delete($id)
     {
@@ -35,9 +37,10 @@ class UserController
     }
     public function update($id)
     {
-        $name = $this->data["name"] ?? null;
-        $email = $this->data["email"] ?? null;
-
+        $user = $this->getUser($id);
+        $name = $this->data["name"] ?? $user["name"];
+        $email = $this->data["email"] ?? $user["email"];
+        // var_dump($user,$name,$email);
         if (!$id || !$name || !$email) {
             return  jsonResponse(["error" => "Missing fields"], 400);
         }
