@@ -1,5 +1,5 @@
 <?php
-return [
+return $config = [
     "host" => "localhost",
     "dbname" => "cv_builder",
     "user" => "root",

@@ -2,70 +2,91 @@
 
 namespace App\Controllers;
 
-// require_once __DIR__ . "../middleware/AuthMiddleware.php";
 use App\Core\Database;
-// use App\Middleware\AuthMiddleware;
 use App\Middleware\AuthMiddleware;
-use App\Models\Auth;
-
-// use APP\Middleware;
-
-use function App\helpers\jsonResponse;
+use App\Core\BaseController;
+use App\Core\Validator;
+use App\Models\Token;
+use App\Models\User;
 
 class AuthController
 {
 
     private $db;
     private $data;
-    private $authModel;
+    private $userModel;
+
+    private $baseController;
     public function __construct()
     {
-        $this->db        = new Database();
-        $this->data      = json_decode(file_get_contents("php://input"), true);
-        $this->authModel = new Auth($this->db->getConnection());
+        
+        $this->db             = new Database();
+        $this->baseController = new BaseController();
+        $this->data           = $this->baseController->getInput();
+        $this->userModel      = new User($this->db->getConnection());
     }
 
-    // 🟢 Register new user
+    // Register new user
     public function register()
     {
+        
         $name = htmlspecialchars(strip_tags($this->data["name"] ?? ""));
         $email = htmlspecialchars(strip_tags($this->data["email"] ?? ""));
         $password = $this->data["password"];
 
-        if (!$name || !$email || !$password) {
-            return jsonResponse(["error" => "Missing required fields"], 400);
+        $pdo = $this->db->getConnection();
+        echo "done";
+
+        $validator = new Validator($this->data, [
+            'name' => 'required|min:3|max:100',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6'
+        ], $pdo);
+        if (!$validator->validate()) {
+            http_response_code(401);//not authorized
+            echo json_encode(['errors' => $validator->errors()], JSON_UNESCAPED_UNICODE);
+            return;
         }
 
-
-        if ($this->authModel->register($name, $email, $password)) {
-           return jsonResponse(["message" => "User registered successfully ✅"]);
+        if ($this->userModel->create(compact("name", "email", "password"))) {
+           return $this->baseController->jsonResponse(["message" => "User registered successfully ✅"]);
         } else {
-           return jsonResponse(["error" => "Failed to register user"], 500);
+           return $this->baseController->jsonResponse(["error" => "Failed to register user"], 500);
         }
     }
 
-    // 🟢 Login existing user
+    // Login existing user
     public function login()
     {
 
-
+        //get data
         $email    = htmlspecialchars(strip_tags($this->data["email"] ?? ""));
         $password = $this->data["password"] ?? "";
-        $user = $this->authModel->login($email, $password);
-        // var_dump($user["password"] );
-        // var_dump($user); // شوف القيم كلها
-        // var_dump($password);
-        // var_dump($user["password"]);
-        // var_dump(password_verify($password, $user["password"]));
+        
+        //validate data
+        $validator = new Validator($this->data, [
+            'email'    => 'required|email',
+            'password' => 'required|min:6'
+        ], $this->db->getConnection());
+        //check validation??
+        if (!$validator->validate()) {
+            http_response_code(401); //not authorized
+            echo json_encode(['errors' => $validator->errors()], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+        //check user in db
+        $user = $this->userModel->read( $email);
+        
+        //verify password
         if (!$user || !password_verify($password, $user["password"])) {
-            return jsonResponse(["error" => "Invalid email or password"], 401);
+            return $this->baseController->jsonResponse(["error" => "Invalid email or password"], 401);
         }
 
         // manual token . .. 
         $token = AuthMiddleware::generateTokens($user);
 
-        return jsonResponse([
-            "message" => "Login successful ✅",
+        return $this->baseController->jsonResponse([
+            "message" => "Login successful ",
             "user" => [
                 "id" => $user["id"],
                 "name" => $user["name"],
@@ -75,13 +96,41 @@ class AuthController
         ]);
     }
 
+    public function logout()
+    {
+        $headers = getallheaders();
+        if (!isset($headers["Authorization"])) {
+            http_response_code(401);
+            echo json_encode(["error" => "Missing token"]);
+            exit;
+        }
+
+        $token = trim(str_replace("Bearer", "", $headers["Authorization"]));
+        // delete Bearer word "bearer token..."
+        //decode token 
+        // var_dump($token);
+
+        $decoded = AuthMiddleware::verifyToken($token);
+        // var_dump($decoded);
+        if (!$decoded) {
+            return $this->baseController->jsonResponse(["error" => "Invalid or expired token"], 401);
+        }
+        $exp_at = date('Y-m-d H:i:s', $decoded->exp)??null;
+
+        // store on blacklist
+        $tokenModel = (new Token($this->db->getConnection()))->create(compact("token", "exp_at"));
+
+        return $this->baseController->jsonResponse(["message" => "Logged out successfully "]);
+    }
+
     public function refreshToken()
     {
-        $data = json_decode(file_get_contents("php://input"), true);
-        $refreshToken = $data["refresh_token"] ?? null;
-        var_dump( $data);
+
+        // var_dump($this->data);
+        $refreshToken = $this->data["refresh_token"] ?? null;
+
         if (!$refreshToken) {
-            echo json_encode(["error" => "Missing refresh token"]);
+            echo $this->baseController->jsonResponse(["error" => "Missing refresh token"]);
             return;
         }
 
@@ -89,7 +138,7 @@ class AuthController
 
         if (!$decoded || $decoded->type !== "refresh") {
             http_response_code(401);
-            echo json_encode(["error" => "Invalid or expired refresh token"]);
+            echo $this->baseController->jsonResponse(["error" => "Invalid or expired refresh token"]);
             return;
         }
 
@@ -99,6 +148,6 @@ class AuthController
         ];
 
         $newTokens = AuthMiddleware::generateTokens($user);
-        return jsonResponse($newTokens);
+        return $this->baseController->jsonResponse($newTokens);
     }
 }
