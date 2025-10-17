@@ -1,9 +1,11 @@
 <?php
 namespace App\Middleware;
 
+use App\Core\Database;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use App\Models\Token;
 
 class AuthMiddleware
 {
@@ -55,6 +57,12 @@ class AuthMiddleware
         }
 
         $token = trim(str_replace("Bearer", "", $headers["Authorization"]));
+        $tokenModel = (new Token((new Database())->getConnection()))->read($token);
+        if ($tokenModel > 0) {
+            http_response_code(401);
+            echo json_encode(["error" => "Token has been expired"]);
+            exit;
+        }
         $decoded = self::verifyToken($token);
 
         if (!$decoded || $decoded->type !== "access") {
