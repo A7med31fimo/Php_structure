@@ -2,12 +2,14 @@
 
 namespace App\Controllers;
 
-use function App\helpers\jsonResponse;
+use App\Core\BaseController;
+
 
 class HomeController
 {
+
     public function index()
     {
-        return jsonResponse(["message" => "Welcome to My PHP Project 🚀"]);
+        return (new BaseController())->jsonResponse(["message" => "Welcome to My PHP Project 🚀"]);
     }
 }
