@@ -3,52 +3,72 @@
 
 namespace App\Controllers;
 
+use App\Core\Validator;
 use App\Models\User;
 use App\Core\Database;
-use function App\helpers\jsonResponse;
-
+use App\Core\BaseController;
 class UserController
 {
     private $user;
     private $data;
+    private $bc;
 
+    private $db;
     public function __construct()
     {
-        $db = new Database();
-        $this->user = new User($db->getConnection());
-        $this->data = json_decode(file_get_contents("php://input"), true);
+        $this->db = new Database();
+        $this->user = new User($this->db->getConnection());
+        $this->bc   = new BaseController();
+        $this->data = $this->bc->getInput();
     }
     public function getAll()
     {
-        return jsonResponse($this->user->getAll());
+        return $this->bc->jsonResponse($this->user->getAll());
     }
     public function getUser($id){
-        return $this->user->getUser($id);
+        // var_dump($id);
+        return $this->bc->jsonResponse($this->user->readById($id));
     }
 
     public function delete($id)
     {
 
         if ($this->user->delete($id)) {
-            return JsonResponse(["message" => "User deleted"]);
+            return $this->bc->jsonResponse(["message" => "User deleted"]);
         } else {
-            return JsonResponse(["error" => "Delete failed"], 500);
+            return $this->bc->jsonResponse(["error" => "Delete failed"], 500);
         }
     }
     public function update($id)
     {
         $user = $this->getUser($id);
-        $name = $this->data["name"] ?? $user["name"];
-        $email = $this->data["email"] ?? $user["email"];
-        // var_dump($user,$name,$email);
-        if (!$id || !$name || !$email) {
-            return  jsonResponse(["error" => "Missing fields"], 400);
+        $name = htmlspecialchars(strip_tags($this->data["name"] ?? $user["name"] ));
+        $password = $this->data["password"] ?? $user["password"];
+        // var_dump($this->data);
+        if (!$id || !$name || !$password) {
+            return  $this->bc->jsonResponse(["error" => "Missing fields"], 400);
+        }
+        $pdo = $this->db->getConnection();
+        $data_to_validate = [
+            "name" => $name,
+            "password" => $password
+        ];
+        $validator = new Validator($data_to_validate, [
+            'name' => 'required|min:3|max:100',
+            'password' => 'required|min:6'
+        ], $pdo);
+        if (!$validator->validate()) {
+            http_response_code(401); //not authorized
+            echo json_encode(['errors' => $validator->errors()], JSON_UNESCAPED_UNICODE);
+            return;
         }
 
-        if ($this->user->update($id, $name, $email)) {
-            return jsonResponse(["message" => "User updated"]);
+        ($password!=$user["password"])?$password=password_hash($password, PASSWORD_DEFAULT):$password=$user["password"];
+
+        if ($this->user->update($id, compact("name", "password"))) {
+            return $this->bc->jsonResponse(["message" => "User updated"]);
         } else {
-            return jsonResponse(["error" => "Update failed"], 500);
+            return $this->bc->jsonResponse(["error" => "Update failed"], 500);
         }
     }
 }
