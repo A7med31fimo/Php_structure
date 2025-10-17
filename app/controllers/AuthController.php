@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Database;
 use App\Middleware\AuthMiddleware;
-use App\Core\BaseController;
+use App\Helpers\Helper;
 use App\Core\Validator;
 use App\Models\Token;
 use App\Models\User;
@@ -16,13 +16,11 @@ class AuthController
     private $data;
     private $userModel;
 
-    private $baseController;
     public function __construct()
     {
         
         $this->db             = new Database();
-        $this->baseController = new BaseController();
-        $this->data           = $this->baseController->getInput();
+        $this->data           = Helper::getInput();
         $this->userModel      = new User($this->db->getConnection());
     }
 
@@ -49,9 +47,9 @@ class AuthController
         }
 
         if ($this->userModel->create(compact("name", "email", "password"))) {
-           return $this->baseController->jsonResponse(["message" => "User registered successfully ✅"]);
+           return Helper::jsonResponse(["message" => "User registered successfully ✅"]);
         } else {
-           return $this->baseController->jsonResponse(["error" => "Failed to register user"], 500);
+           return Helper::jsonResponse(["error" => "Failed to register user"], 500);
         }
     }
 
@@ -79,13 +77,13 @@ class AuthController
         
         //verify password
         if (!$user || !password_verify($password, $user["password"])) {
-            return $this->baseController->jsonResponse(["error" => "Invalid email or password"], 401);
+            return Helper::jsonResponse(["error" => "Invalid email or password"], 401);
         }
 
         // manual token . .. 
         $token = AuthMiddleware::generateTokens($user);
 
-        return $this->baseController->jsonResponse([
+        return Helper::jsonResponse([
             "message" => "Login successful ",
             "user" => [
                 "id" => $user["id"],
@@ -113,14 +111,14 @@ class AuthController
         $decoded = AuthMiddleware::verifyToken($token);
         // var_dump($decoded);
         if (!$decoded) {
-            return $this->baseController->jsonResponse(["error" => "Invalid or expired token"], 401);
+            return Helper::jsonResponse(["error" => "Invalid or expired token"], 401);
         }
         $exp_at = date('Y-m-d H:i:s', $decoded->exp)??null;
 
         // store on blacklist
         $tokenModel = (new Token($this->db->getConnection()))->create(compact("token", "exp_at"));
 
-        return $this->baseController->jsonResponse(["message" => "Logged out successfully "]);
+        return Helper::jsonResponse(["message" => "Logged out successfully "]);
     }
 
     public function refreshToken()
@@ -130,7 +128,7 @@ class AuthController
         $refreshToken = $this->data["refresh_token"] ?? null;
 
         if (!$refreshToken) {
-            echo $this->baseController->jsonResponse(["error" => "Missing refresh token"]);
+            echo Helper::jsonResponse(["error" => "Missing refresh token"]);
             return;
         }
 
@@ -138,7 +136,7 @@ class AuthController
 
         if (!$decoded || $decoded->type !== "refresh") {
             http_response_code(401);
-            echo $this->baseController->jsonResponse(["error" => "Invalid or expired refresh token"]);
+            echo Helper::jsonResponse(["error" => "Invalid or expired refresh token"]);
             return;
         }
 
@@ -148,6 +146,6 @@ class AuthController
         ];
 
         $newTokens = AuthMiddleware::generateTokens($user);
-        return $this->baseController->jsonResponse($newTokens);
+        return Helper::jsonResponse($newTokens);
     }
 }

@@ -6,47 +6,44 @@ namespace App\Controllers;
 use App\Core\Validator;
 use App\Models\User;
 use App\Core\Database;
-use App\Core\BaseController;
+use App\Helpers\Helper;
 class UserController
 {
     private $user;
     private $data;
-    private $bc;
-
     private $db;
     public function __construct()
     {
         $this->db = new Database();
         $this->user = new User($this->db->getConnection());
-        $this->bc   = new BaseController();
-        $this->data = $this->bc->getInput();
+        $this->data = Helper::getInput();
     }
     public function getAll()
     {
-        return $this->bc->jsonResponse($this->user->getAll());
+        return Helper::jsonResponse($this->user->getAll());
     }
     public function getUser($id){
         // var_dump($id);
-        return $this->bc->jsonResponse($this->user->readById($id));
+        return Helper::jsonResponse($this->user->readById($id));
     }
 
     public function delete($id)
     {
 
         if ($this->user->delete($id)) {
-            return $this->bc->jsonResponse(["message" => "User deleted"]);
+            return Helper::jsonResponse(["message" => "User deleted"]);
         } else {
-            return $this->bc->jsonResponse(["error" => "Delete failed"], 500);
+            return Helper::jsonResponse(["error" => "Delete failed"], 500);
         }
     }
     public function update($id)
     {
-        $user = $this->getUser($id);
+        $user = $this->user->readById($id);
         $name = htmlspecialchars(strip_tags($this->data["name"] ?? $user["name"] ));
         $password = $this->data["password"] ?? $user["password"];
         // var_dump($this->data);
         if (!$id || !$name || !$password) {
-            return  $this->bc->jsonResponse(["error" => "Missing fields"], 400);
+            return  Helper::jsonResponse(["error" => "Missing fields"], 400);
         }
         $pdo = $this->db->getConnection();
         $data_to_validate = [
@@ -66,9 +63,9 @@ class UserController
         ($password!=$user["password"])?$password=password_hash($password, PASSWORD_DEFAULT):$password=$user["password"];
 
         if ($this->user->update($id, compact("name", "password"))) {
-            return $this->bc->jsonResponse(["message" => "User updated"]);
+            return Helper::jsonResponse(["message" => "User updated"]);
         } else {
-            return $this->bc->jsonResponse(["error" => "Update failed"], 500);
+            return Helper::jsonResponse(["error" => "Update failed"], 500);
         }
     }
 }

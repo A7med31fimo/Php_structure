@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\BaseController;
+use App\Helpers\Helper;
 
 
 class HomeController
@@ -10,6 +11,6 @@ class HomeController
 
     public function index()
     {
-        return (new BaseController())->jsonResponse(["message" => "Welcome to My PHP Project 🚀"]);
+        return Helper::jsonResponse(["message" => "Welcome to My PHP Project 🚀"]);
     }
 }
