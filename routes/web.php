@@ -3,10 +3,11 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 use App\Controllers\AuthController;
 use App\Controllers\UserController;
-use App\Core\BaseController;
+use App\Helpers\Helper;
 use App\Middleware\AuthMiddleware;
 
-// 🧭 Routes
+// Routes
+
 $router->add(
     "GET",
     "/users",
@@ -20,7 +21,7 @@ $router->add(
     "/user",
     function () {
         $user = AuthMiddleware::protect();
-        $data = BaseController::getInput();
+        $data = Helper::getInput();
         $id = $data["id"] ?? null;
         $id = intval($id);
         if ($id) (new UserController())->getUser($id);
@@ -30,14 +31,14 @@ $router->add(
 // $router->add("POST", "/users", [new UserController(), "create"]);
 $router->add("DELETE", "/users/delete", function () {//done
     $user = AuthMiddleware::protect();
-    $id = BaseController::getInput();
+    $id = Helper::getInput();
     $id = intval($id["id"] ?? null);
     // var_dump($id);
     if ($id) (new UserController())->delete($id);
     else echo json_encode(["error" => "ID is required"]);
 });
 $router->add("PUT", "/users/update", function () { //done
-    $id = BaseController::getInput();
+    $id = Helper::getInput();
     $id = intval($id["id"] ?? null);
 
     if ($id) (new UserController())->update($id);
