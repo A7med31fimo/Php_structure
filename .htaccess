@@ -2,11 +2,13 @@
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
-</IfModule>
 
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} (.+)/$
-RewriteRule ^ %1 [R=301,L]
-RewriteRule ^(.*)$ public/index.php?url=$1 [QSA,L]
+    RewriteEngine On
+    RewriteBase /Php_structure/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    #RewriteRule ^ %1 [R=301,L]
+    RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+
+</IfModule>
