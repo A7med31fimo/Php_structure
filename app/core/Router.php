@@ -22,10 +22,12 @@ class Router
         $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $requestMethod = $_SERVER['REQUEST_METHOD'];
       
-
+        
         $scriptName =  dirname($_SERVER['SCRIPT_NAME']);  //level up on directory to get current file
+       
         $requestUri = str_replace($scriptName, '', $requestUri);
-  
+       
+
         foreach ($this->routes as $route) {
             // var_dump($route["path"],$requestUri);
             if ($route["path"] === $requestUri && $route["method"] === $requestMethod) {
@@ -36,6 +38,6 @@ class Router
        
 
         http_response_code(404);
-        echo json_encode(["error" => "Route not found"]);
+        echo json_encode(["error" => "Page not found"]);
     }
 }
