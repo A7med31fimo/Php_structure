@@ -1,14 +1,11 @@
 <IfModule mod_rewrite.c>
-    <IfModule mod_negotiation.c>
-        Options -MultiViews -Indexes
-    </IfModule>
-
     RewriteEngine On
     RewriteBase /Php_structure/
+
+    # تجاهل الملفات والمجلدات الموجودة فعلاً
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} (.+)/$
-    #RewriteRule ^ %1 [R=301,L]
-    RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
 
+    # وجّه أي طلب للـ index.php
+    RewriteRule ^ index.php [QSA,L]
 </IfModule>
