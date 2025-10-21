@@ -1,0 +1,12 @@
+body {
+  background: linear-gradient(120deg, #6f42c1, #6610f2);
+}
+
+.card {
+  border-radius: 1rem;
+  background: #fff;
+}
+
+.btn {
+  font-weight: 500;
+}
