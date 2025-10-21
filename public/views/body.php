@@ -1,15 +1,4 @@
-<body>
-    <button id="themeToggle" class="theme-toggle" title="Toggle theme">🌙</button>
 
-    <div class="page-wrap">
-        <div class="d-flex align-items-center justify-content-between mb-4">
-            <div>
-                <div class="brand">Fimo CV • Builder</div>
-                <div class="muted">Creative tech UI — outputs ATS-friendly CV</div>
-            </div>
-            <div>
-                <a class="btn btn-light btn-sm" href="./pages/preview_cv.php" target="_blank">Open sample CV</a>
-            </div>
         </div>
 
         <form id="cvForm" action="/Php_structure/public/views/preview_cv.php" method="post" class="builder" novalidate>
