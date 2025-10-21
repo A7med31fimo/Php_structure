@@ -1,0 +1,104 @@
+/* ATS-friendly clean style */
+body {
+  background: #f5f7fb;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 24px;
+  color: #111;
+}
+
+.cv-wrap {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 26px;
+  border-radius: 6px;
+  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.06);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0b63c6;
+}
+
+.title {
+  font-size: 14px;
+  color: #333;
+  margin-top: 6px;
+}
+
+.contact {
+  font-size: 13px;
+  color: #444;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #e6e9ef;
+  margin: 14px 0;
+}
+
+h3 {
+  font-size: 15px;
+  margin-bottom: 8px;
+  color: #0b63c6;
+}
+
+.section {
+  margin-bottom: 12px;
+}
+
+ul {
+  padding-left: 18px;
+  margin: 6px 0;
+}
+
+li {
+  margin-bottom: 6px;
+}
+
+.muted {
+  color: #5b6878;
+  font-size: 13px;
+}
+
+/* print-friendly small tweaks */
+@media print {
+  body {
+    background: white;
+  }
+
+  .cv-wrap {
+    box-shadow: none;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .no-print {
+    display: none;
+  }
+}
+
+/* Dark mode support (preview page) */
+body.dark-mode {
+  background: #0b0f14;
+  color: #e6eef8;
+}
+
+body.dark-mode .cv-wrap {
+  background: #071224;
+  box-shadow: none;
+  border: 1px solid #123;
+  color: #e6eef8;
+}
+
+body.dark-mode .name {
+  color: #93c5fd;
+}

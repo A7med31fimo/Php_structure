@@ -1,0 +1,123 @@
+:root {
+  --accent1: #6d28d9;
+  /* purple */
+  --accent2: #2563eb;
+  /* blue */
+  --card: #0f172a10;
+  --glass: rgba(255, 255, 255, 0.08);
+}
+
+body {
+  min-height: 100vh;
+  font-family: Inter, system-ui, Arial, sans-serif;
+  background: linear-gradient(135deg, #0ea5e9 0%, #7c3aed 45%, #0f172a 100%);
+  color: #0f172a;
+  padding: 32px;
+  transition: background 0.35s, color 0.35s;
+}
+
+.page-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.brand {
+  color: white;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.4px;
+}
+
+.builder {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.03)
+  );
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.45);
+  backdrop-filter: blur(6px);
+  transition: transform 0.25s;
+}
+
+.section-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 14px;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.section-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.35);
+}
+
+.muted {
+  color: #cbd5e1;
+  font-size: 0.95rem;
+}
+
+.accent-pill {
+  background: linear-gradient(90deg, var(--accent2), var(--accent1));
+  color: white;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.small-btn {
+  font-size: 0.86rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 8px;
+}
+
+/* Add/delete buttons */
+.add-btn {
+  background: transparent;
+  border: 2px dashed rgba(255, 255, 255, 0.12);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+.del-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+/* preview toggle & theme */
+.theme-toggle {
+  position: fixed;
+  right: 24px;
+  top: 24px;
+  z-index: 999;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: white;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* responsive */
+@media (max-width: 900px) {
+  body {
+    padding: 18px;
+  }
+}
+
+/* dark-mode (for the builder visuals) */
+body.dark-mode {
+  background: linear-gradient(135deg, #050712, #0b1220 40%, #09182b 100%);
+  color: #e6eef8;
+}
