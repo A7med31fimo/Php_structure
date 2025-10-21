@@ -55,3 +55,7 @@ $router->add("POST", "/logout", function () {
     $user = AuthMiddleware::protect();
     (new AuthController())->logout();
 });//done
+$router->add("GET", "/dashboard", 
+function (){
+     header("Location: public/views/dashboard.php");
+});
