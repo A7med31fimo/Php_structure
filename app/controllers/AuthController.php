@@ -82,16 +82,28 @@ class AuthController
 
         // manual token . .. 
         $token = AuthMiddleware::generateTokens($user);
-
-        return Helper::jsonResponse([
-            "message" => "Login successful ",
-            "user" => [
-                "id" => $user["id"],
-                "name" => $user["name"],
-                "email" => $user["email"],
-                "token" => $token
-            ]
-        ]);
+        session_start();
+        if ($user) {
+            // ✅ حفظ بيانات المستخدم في السيشن
+            $_SESSION['user'] = [
+                'id' => $user['id'],
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'token' => $token
+            ];
+            session_write_close();
+            // var_dump($_SESSION['user']);
+            return json_encode([
+                'status' => 'success',
+                'message' => 'Login successful'
+            ]);
+        } else {
+            http_response_code(401);
+            echo json_encode([
+                'status' => 'error',
+                'error' => 'Invalid email or password'
+            ]);
+        }
     }
 
     public function logout()

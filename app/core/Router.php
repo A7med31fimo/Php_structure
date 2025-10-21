@@ -27,7 +27,8 @@ class Router
        
         $requestUri = str_replace($scriptName, '', $requestUri);
        
-
+        // var_dump($requestUri);
+        
         foreach ($this->routes as $route) {
             // var_dump($route["path"],$requestUri);
             if ($route["path"] === $requestUri && $route["method"] === $requestMethod) {
@@ -37,7 +38,7 @@ class Router
         }
        
 
-        http_response_code(404);
-        echo json_encode(["error" => "Page not found"]);
+        // http_response_code(404);
+        // echo json_encode(["error" => "Page not found"]);
     }
 }
