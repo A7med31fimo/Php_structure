@@ -68,20 +68,21 @@ $custom_content = getArr('custom_content');
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= safe($full_name ?: 'Generated CV') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?= './public/assets/css/preview_cv.css' ?>">
+    <link rel="stylesheet" href="<?= '../assets/css/preview_cv.css' ?>">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 </head>
 
 <body>
     <div class="d-flex justify-content-between mb-3 no-print">
         <div>
-            <a href="../index.php" class="btn btn-outline-secondary btn-sm">↩ Back to editor</a>
+            <a href="./home.php" class="btn btn-outline-secondary btn-sm">↩ Back to editor</a>
         </div>
         <div>
-            <button onclick="window.print()" class="btn btn-primary btn-sm">Download / Print PDF</button>
+            <button id="btnPrint" class="btn btn-primary btn-sm">Download / Print PDF</button>
             <button id="themeToggle" class="btn btn-light btn-sm">🌙</button>
         </div>
     </div>
-
     <div class="cv-wrap">
         <div class="header">
             <div>
@@ -278,21 +279,7 @@ $custom_content = getArr('custom_content');
         ?>
 
     </div>
-
-    <script>
-        // theme toggle for preview page
-        const themeToggle = document.getElementById('themeToggle');
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-            themeToggle.textContent = '☀️';
-        }
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            themeToggle.textContent = isDark ? '☀️' : '🌙';
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        });
-    </script>
+    <script src="../assets/scripts/cv_preview.js"></script>
 </body>
 
 </html>
