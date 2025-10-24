@@ -21,7 +21,7 @@ class User implements CrudInterface
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function read($email)  {
-        var_dump($email);
+        // var_dump($email);
         $stmt = $this->conn->prepare("SELECT * FROM $this->table where email = ?;");
         $stmt->execute([$email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -33,7 +33,7 @@ class User implements CrudInterface
     }
     public function create($data)
     {
-        var_dump($data);
+        // var_dump($data);
         $hash = password_hash($data["password"], PASSWORD_DEFAULT);
         $stmt = $this->conn->prepare("INSERT INTO $this->table (name, email, password) VALUES (?, ?, ?)");
         return $stmt->execute([$data["name"], $data["email"], $hash]);
@@ -47,6 +47,16 @@ class User implements CrudInterface
     {
         $stmt = $this->conn->prepare("UPDATE $this->table SET name = ?, password = ? WHERE id = ?");
         return $stmt->execute([$data["name"], $data["password"], $id]);
+    }
+    public function updateVerificationCode($email, $code, $expires_at)
+    {
+        $stmt = $this->conn->prepare("UPDATE $this->table SET verification_code=?, code_expires_at=? WHERE email=?");
+        return $stmt->execute([$code, $expires_at, $email]);
+    }
+    public function markVerified($email)
+    {
+        $stmt = $this->conn->prepare("UPDATE $this->table SET verified=1, verification_code=NULL, code_expires_at=NULL WHERE email=?");
+        return $stmt->execute([$email]);
     }
     
 }
