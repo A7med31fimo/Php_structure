@@ -65,8 +65,10 @@ class Validator
             'email' => "$field Enter a valid email",
             'min' => "$field Should be more than {$params[0]}",
             'max' => "$field Should be less than {$params[0]}",
-            'unique' => "$field This user already exists",
+            'unique' => "$field This is already exists",
             'confirmed' => "Confirmation $field not matched",
+            'phone' => "phone number $field not valid",
+
         ];
         return $defaults[$rule] ?? "$field Not valid";
     }
@@ -107,12 +109,19 @@ class Validator
         $stmt->execute([$v]);
         return $stmt->fetchColumn() == 0;
     }
-
+    function validatePhone($phone)
+    {
+        // Remove spaces
+        $phone = trim($phone);
+        // Allow +country code and 10–15 digits
+        return preg_match('/^(010|011|012|015)\d{8}$/', $phone);
+    }
     // getters
     public function errors(): array
     {
         return $this->errors;
     }
+    
     public function fails(): bool
     {
         return !empty($this->errors);

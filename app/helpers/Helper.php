@@ -27,15 +27,25 @@ class Helper
 
     public static function jsonResponse($data, $status = 200)
     {
+        header('Content-Type: application/json; charset=UTF-8');
         http_response_code($status);
-        header("Content-Type: application/json; charset=UTF-8");
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        exit;
     }
+
 
     public static function getInput()
     {
         return json_decode(file_get_contents('php://input'), true);
     }
+
+    public static function noCacheHeaders()
+    {
+        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+        header("Cache-Control: post-check=0, pre-check=0", false);
+        header("Pragma: no-cache");
+    }
+    
 }
 //                     case 100: = 'Continue'
 //                     case 101: = 'Switching Protocols'
