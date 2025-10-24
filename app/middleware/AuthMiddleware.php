@@ -18,7 +18,7 @@ class AuthMiddleware
             "email" => $user["email"],
             "type" => "access",
             "iat" => time(),
-            "exp" => time() + (60 * 15) // Access token: 15 دقيقة
+            "exp" => time() + (60 * 15) // Access token: 15 min
         ];
 
         $refreshPayload = [
@@ -26,7 +26,7 @@ class AuthMiddleware
             "email" => $user["email"],
             "type" => "refresh",
             "iat" => time(),
-            "exp" => time() + (60 * 60 * 24 * 7) // Refresh token: 7 أيام
+            "exp" => time() + (60 * 60 * 24 * 7) // Refresh token: 7 days
         ];
 
         $accessToken = JWT::encode($accessPayload, self::$secret, "HS256");
