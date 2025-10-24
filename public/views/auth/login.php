@@ -1,20 +1,31 @@
+<?php
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+?>
 <!doctype html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login | FimoBook</title>
+    <title>Login | CV-Creator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/auth.css">
 </head>
 
 <body class="bg-light">
+    <script>
+        // If already logged in, go to home page
+        const token = localStorage.getItem("auth_token");
+        if (token) {
+            window.location.href = "http://localhost/Php_structure/public/views/home.php";
+        }
+        
+    </script>
 
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card shadow-lg p-4" style="max-width:400px;width:100%;">
             <h3 class="text-center mb-4">Welcome Back 👋</h3>
-
             <div id="alertBox"></div>
 
             <form id="loginForm">

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Register | FimoBook</title>
+    <title>Register | CV-Creator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/auth.css">
 </head>
@@ -30,7 +30,7 @@
                     <label class="form-label">Password</label>
                     <input type="password" name="password" class="form-control" required placeholder="Password">
                 </div>
-                <button type="submit" class="btn btn-success w-100">Register</button>
+                <button type="submit" class="btn btn-primary w-100">Register</button>
 
                 <p class="text-center mt-3">
                     Already have an account? <a href="login.php">Login</a>

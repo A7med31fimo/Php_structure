@@ -1,12 +1,10 @@
-
-
 <!doctype html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard | FimoCV</title>
+    <title>Dashboard | CV-Creator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -58,6 +56,13 @@
 </head>
 
 <body>
+    <script>
+        // If already logged in, go to home page
+        const token = localStorage.getItem("auth_token");
+        if (token) {
+            window.location.href = "http://localhost/Php_structure/public/views/home.php";
+        }
+    </script>
     <div class="dashboard-card">
         <h1>Welcome to FimoCV Builder 🚀</h1>
         <p>Create your professional CV easily and manage your profile.</p>

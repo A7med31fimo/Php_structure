@@ -25,9 +25,10 @@
                                 <a class="nav-link" href="/Php_structure/public/views/preview_cv.php" target="_blank">Open sample CV</a>
                             </li>
 
-                            <?php if (isset($_SESSION['user'])): ?>
+                            <?php
+                            if (isset($_SESSION['user'])): ?>
                                 <li class="nav-item">
-                                    <a class="btn btn-outline-light btn-sm ms-3" href="/Php_structure/logout.php">Logout</a>
+                                    <a id="logoutBtn" class="btn btn-outline-light btn-sm ms-3">Logout</a>
                                 </li>
                             <?php else: ?>
                                 <li class="nav-item"><a class="nav-link" href="/Php_structure/public/views/login.php">Login</a></li>
