@@ -1,6 +1,6 @@
 project:
-  name: "Create-ATS-CV"
-  description: >
+  - name: "Create-ATS-CV"
+  - description: >
     A web-based tool for generating ATS-friendly (Applicant Tracking System)
     resumes and CVs with clean formatting, keyword optimization, and multiple
     export options for better job application results.
@@ -70,3 +70,4 @@ acknowledgments:
   - "Open source libraries and frameworks used in development"
   - "Guidance from ATS optimization best practices"
   - "Contributions from community developers and testers"
+
